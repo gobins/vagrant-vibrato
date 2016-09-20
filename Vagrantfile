@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     ]
   end
 
-  config.vm.network "forwarded_port", guest: 9200, host: 9200
+ 
 
 
 
@@ -23,6 +23,8 @@ Vagrant.configure("2") do |config|
     puppet.manifest_file = "site.pp"
     puppet.module_path = "puppet/modules"
   end
-
+  
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
+  
   config.vm.provision :shell, :path => "run_server.sh"
 end
