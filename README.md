@@ -5,7 +5,9 @@
 2. Runs puppet
    - Install docker
    - Runs Elasticsearch container
-   - Downloads and loads NSW ICT data into ES using a python script
+   - Downloads and loads NSW ICT data 
+   - Runs a python script
+   - Python script parses csv data and inserts data into a new index
    - Starts a python SimpleHTTPServer on port 80 and serves app directory
 3. Exposes elasticsearch ports
 
