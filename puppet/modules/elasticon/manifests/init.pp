@@ -8,8 +8,12 @@ class elasticon{
   docker::run { 'run-elasticsearch':
     image   => 'elasticsearch',
     ports   => ['9200:9200', '9300:9300'],
-    volumes => ['/vagrant:/etc/elasticsearch'],
+    volumes => ['/vagrant:/elasticsearch/config/'],
   } ->
+  # exec {'start-es-container':
+  #   command    => "docker run -d -p 9200:9200 -p 9300:9300 -v /vagrant:/data elasticsearch /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml",
+  #   path       => '/usr/bin',
+  # } ->
 
   exec {'wait-for-es':
     command    => "curl -XGET http://localhost:9200/",
@@ -17,12 +21,7 @@ class elasticon{
     try_sleep  => 5,
     path       => '/usr/bin',
     before     => Exec['run-csv-load']
-  }
-
-  service { 'disable-firewalld':
-    enable => false,
-    ensure => stopped,
-  }
+  } ->
 
   wget::fetch { "download-ict-report":
     source      => "http://data.nsw.gov.au/data/dataset/cf9d3c60-f07c-47ef-8fe3-ae94a308bcf2/resource/7cef0d5c-d38d-4074-b9dd-3f27ef7ce9f6/download/ICT-Survey-Data-2014-15-CSV.zip",
@@ -63,12 +62,11 @@ class elasticon{
     cwd         => '/tmp',
     path        => '/usr/bin',
     require     => File["/tmp/load_csv_data.py"],
-  } ->
+  }->
 
-  exec { 'start-server':
-    command     => 'test.sh',
-    cwd         => '/vagrant/app',
-    path        => '/usr/bin',
+  service { 'firewalld':
+    enable => false,
+    ensure => stopped,
   }
 
 }
